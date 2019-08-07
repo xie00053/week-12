@@ -2,22 +2,37 @@
   <div id="app">
     <div id="nav">
       <router-link :to="{ name: 'home' }">Home</router-link>
-      <router-link :to="{ name: 'signup' }">Sign Up</router-link>
-      <router-link :to="{ name: 'signin' }">Sign In</router-link>
-      <router-link :to="{ name: 'dashboard' }">Dashboard</router-link>
+      <router-link v-if="!auth" :to="{ name: 'signup' }">Sign Up</router-link>
+      <router-link v-if="!auth" :to="{ name: 'signin' }">Sign In</router-link>
+      <router-link v-if="auth" :to="{ name: 'dashboard' }">Dashboard</router-link>
+      <a v-if="auth" class="logout" @click="logout"> Log Out</a>
     </div>
     <!-- if the error is set, diaplay the div, the info of the div is the {{error}} -->
-    <div class="error" v-if="error">{{error}}</div>
+    <div class="error" @click="clearError" v-if="error">{{error}}</div>
     <router-view />
   </div>
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapActions, mapGetters} from "vuex";
 // set the error message as global function
 export default {
-  computed: mapState(["error"])
+  computed: {
+    ...mapState(["error"]),
+// 如果sign in则只显示dashboard，如果不是则会显示 sign in  和 sign up
+    ...mapGetters({
+      auth: "isauthenticated"
+    })
+  },
+
+  methods: {
+    ...mapActions(["clearError", "logout","autoLogin"])
+  },
+  created() {
+    this.autoLogin();
+  },  
 };
+
 </script>
 
 

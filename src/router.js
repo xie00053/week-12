@@ -5,6 +5,8 @@ import SignUp from "./views/SignUp.vue";
 import SignIn from "./views/SignIn.vue";
 import Dashboard from "./views/Dashboard.vue";
 
+import store from "./store";
+
 Vue.use(Router);
 
 export default new Router({
@@ -24,12 +26,27 @@ export default new Router({
     {
       path: "/signin",
       name: "signin",
-      component: SignIn
+      component: SignIn,
+      beforeEnter(to, from, next) {
+        if (!store.state.idToken) {
+            next();
+        } else {
+            next("/dashboard");
+        }
+      }
     },
     {
       path: "/dashboard",
       name: "dashboard",
-      component: Dashboard
+      component: Dashboard,
+      // 如果sign in，则可以进入dashboard页面，如果没有，则不能进入
+      beforeEnter(to, from, next) {
+        if (store.state.idToken) {
+            next();
+        } else {
+            next("/signin");
+        }
+      }
     }
   ]
 });

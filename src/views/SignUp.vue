@@ -39,9 +39,7 @@ import { mapActions } from "vuex";
             };
             this.signUp(formData);
         }
-        }
-       
-        
+        }       
     };
 
 </script>
